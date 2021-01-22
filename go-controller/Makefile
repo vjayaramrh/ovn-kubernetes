@@ -9,6 +9,7 @@ PKGS ?=
 GOPATH ?= $(shell go env GOPATH)
 TEST_REPORT_DIR?=$(CURDIR)/_artifacts
 export TEST_REPORT_DIR
+GO_DKR_IMG = golang:1.15.7-buster
 
 .PHONY: all build check test
 
@@ -28,6 +29,9 @@ windows:
 
 check test:
 	RACE=1 hack/test-go.sh ${PKGS}
+
+dkr_check dkr_test:
+	RACE=1 DOCKER_TEST=1 hack/test-go.sh ${PKGS}
 
 codegen:
 	hack/update-codegen.sh
@@ -52,3 +56,6 @@ lint:
 
 gofmt:
 	@./hack/verify-gofmt.sh
+
+docker_launch_tests:
+	docker run -it --cap-add=NET_ADMIN --cap-add=SYS_ADMIN -v $(shell dirname $(PWD)):/go/src/github.com/ovn-org/ovn-kubernetes -w /go/src/github.com/ovn-org/ovn-kubernetes/go-controller $(GO_DKR_IMG) sh -c "make dkr_check"
