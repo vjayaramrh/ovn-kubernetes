@@ -9,7 +9,7 @@ PKGS ?=
 GOPATH ?= $(shell go env GOPATH)
 TEST_REPORT_DIR?=$(CURDIR)/_artifacts
 export TEST_REPORT_DIR
-GO_DKR_IMG = golang:1.15.7-buster
+GO_DOCKER_IMG = quay.io/giantswarm/golang:1.15.7
 
 .PHONY: all build check test
 
@@ -58,4 +58,4 @@ gofmt:
 	@./hack/verify-gofmt.sh
 
 docker_launch_tests:
-	docker run -it --cap-add=NET_ADMIN --cap-add=SYS_ADMIN -v $(shell dirname $(PWD)):/go/src/github.com/ovn-org/ovn-kubernetes -w /go/src/github.com/ovn-org/ovn-kubernetes/go-controller $(GO_DKR_IMG) sh -c "make dkr_check"
+	docker run -it --cap-add=NET_ADMIN --cap-add=SYS_ADMIN -v $(shell dirname $(PWD)):/go/src/github.com/ovn-org/ovn-kubernetes -w /go/src/github.com/ovn-org/ovn-kubernetes/go-controller $(GO_DOCKER_IMG) sh -c "make dkr_check"
